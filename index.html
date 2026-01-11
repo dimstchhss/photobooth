@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Photobooth Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📸 Photobooth Pro</h1>
+
+<div class="container">
+  <video id="camera" autoplay playsinline></video>
+
+  <div class="controls">
+    <select id="filter">
+      <option value="none">Normal</option>
+      <option value="grayscale(100%)">Black & White</option>
+      <option value="sepia(100%)">Vintage</option>
+    </select>
+
+    <button id="start">Start Photobooth</button>
+    <button id="download" disabled>Download</button>
+  </div>
+
+  <div id="countdown"></div>
+
+  <canvas id="canvas"></canvas>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
