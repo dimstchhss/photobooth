@@ -5,28 +5,31 @@
 <title>D PhotoBooth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="style.css">
 
-<!-- Fabric HARUS duluan -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-
-<!-- script.js WAJIB defer -->
-<script defer src="./script.js"></script>
+<script defer src="script.js"></script>
 </head>
 
 <body>
+
+<!-- PERMISSION SCREEN -->
+<div id="permissionScreen" class="permission">
+  <h2>📸 Aktifkan Kamera</h2>
+  <p>Klik tombol di bawah untuk mengizinkan akses kamera</p>
+  <button id="startCameraBtn">Aktifkan Kamera</button>
+</div>
+
 <div class="app">
 
 <header>
-  <strong>😈DPhotoBooth</strong>
-
+  <strong>🎀 D PhotoBooth</strong>
   <select id="photoCount">
     <option value="2">2 Foto</option>
     <option value="3">3 Foto</option>
     <option value="4">4 Foto</option>
     <option value="5">5 Foto</option>
   </select>
-
   <button id="soundBtn">🔊 Sound ON</button>
 </header>
 
@@ -80,5 +83,6 @@
 
 <canvas id="canvas" hidden></canvas>
 </div>
+
 </body>
 </html>
