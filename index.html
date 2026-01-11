@@ -3,10 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>D PhotoBooth</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="D PhotoBooth - Web photobooth online dengan kamera dan editor foto">
+
+<!-- GOOGLE FONT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
 
+<!-- FABRIC -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 <script defer src="script.js"></script>
 </head>
@@ -14,30 +22,31 @@
 <body>
 
 <!-- PERMISSION SCREEN -->
-<div id="permissionScreen" class="permission">
+<div id="permissionScreen" class="permission" role="dialog" aria-modal="true">
   <h2>📸 Aktifkan Kamera</h2>
   <p>Klik tombol di bawah untuk mengizinkan akses kamera</p>
   <button id="startCameraBtn">Aktifkan Kamera</button>
 </div>
 
-<div class="app">
+<main class="app">
 
 <header>
-  <strong>🎀 D PhotoBooth</strong>
-  <select id="photoCount">
+  <strong>😈DPhotoBooth</strong>
+
+  <select id="photoCount" aria-label="Jumlah foto">
     <option value="2">2 Foto</option>
     <option value="3">3 Foto</option>
     <option value="4">4 Foto</option>
     <option value="5">5 Foto</option>
   </select>
+
   <button id="soundBtn">🔊 Sound ON</button>
 </header>
 
-<!-- CAMERA -->
-<div class="main camera">
+<section class="main camera">
   <div class="camera-wrap">
     <video id="video" autoplay playsinline></video>
-    <div id="countdown">3</div>
+    <div id="countdown" aria-live="polite">3</div>
     <div id="flash"></div>
   </div>
 
@@ -46,20 +55,21 @@
     <div class="filter-list" id="filters"></div>
     <button id="snapBtn" class="snap">📸 JEPRET!</button>
   </div>
-</div>
+</section>
 
-<!-- REVIEW -->
-<div class="review">
+<section class="review">
   <h3>🖼 Review Foto</h3>
   <div class="preview" id="preview"></div>
   <button id="editBtn">Edit Photobooth</button>
-</div>
+</section>
 
-<!-- EDITOR -->
-<div class="editor">
+<section class="editor">
   <h3>✨ Edit Photobooth</h3>
+
   <div class="editor-layout">
-    <canvas id="editorCanvas" width="600" height="900"></canvas>
+    <canvas id="editorCanvas" width="600" height="900">
+      Browser kamu tidak mendukung canvas
+    </canvas>
 
     <div class="controls">
       <strong>🎨 Background</strong>
@@ -79,11 +89,11 @@
       <button id="downloadBtn">⬇ Download</button>
     </div>
   </div>
-</div>
+</section>
 
 <canvas id="canvas" hidden></canvas>
-</div>
+
+</main>
 
 </body>
 </html>
-
