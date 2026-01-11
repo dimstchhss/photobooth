@@ -1,32 +1,77 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Photobooth Pro</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>D PhotoBooth</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 </head>
+
 <body>
+<div class="app">
 
-<h1>📸 Photobooth Pro</h1>
+<header>
+  <strong>😈DPhotoBooth</strong>
+  <select id="photoCount">
+    <option value="2">2 Foto</option>
+    <option value="3">3 Foto</option>
+    <option value="4">4 Foto</option>
+    <option value="5">5 Foto</option>
+  </select>
+  <button id="soundBtn">🔊 Sound ON</button>
+</header>
 
-<div class="container">
-  <video id="camera" autoplay playsinline></video>
-
-  <div class="controls">
-    <select id="filter">
-      <option value="none">Normal</option>
-      <option value="grayscale(100%)">Black & White</option>
-      <option value="sepia(100%)">Vintage</option>
-    </select>
-
-    <button id="start">Start Photobooth</button>
-    <button id="download" disabled>Download</button>
+<!-- CAMERA -->
+<div class="main camera">
+  <div class="camera-wrap">
+    <video id="video" autoplay playsinline></video>
+    <div id="countdown">3</div>
+    <div id="flash"></div>
   </div>
 
-  <div id="countdown"></div>
-
-  <canvas id="canvas"></canvas>
+  <div class="controls">
+    <strong>🎨 Filter</strong>
+    <div class="filter-list" id="filters"></div>
+    <button class="snap" id="snapBtn">📸 JEPRET!</button>
+  </div>
 </div>
+
+<!-- REVIEW -->
+<div class="review">
+  <h3>🖼 Review Foto</h3>
+  <div class="preview" id="preview"></div>
+  <button id="editBtn">Edit Photobooth</button>
+</div>
+
+<!-- EDITOR -->
+<div class="editor">
+  <h3>✨ Edit Photobooth</h3>
+  <div class="editor-layout">
+    <canvas id="editorCanvas" width="600" height="900"></canvas>
+
+    <div class="controls">
+      <strong>🎨 Background</strong>
+      <button data-bg="#fecdd3">Pink</button>
+      <button data-bg="#bfdbfe">Blue</button>
+      <button data-bg="#dcfce7">Green</button>
+
+      <strong>🖼 Frame</strong>
+      <button data-frame="https://i.imgur.com/Z6XqQ2Y.png">Frame 1</button>
+      <button data-frame="https://i.imgur.com/Wq7XkNw.png">Frame 2</button>
+
+      <strong>✨ Sticker</strong>
+      <button data-sticker="https://i.imgur.com/OVQ8b7M.png">⭐</button>
+      <button data-sticker="https://i.imgur.com/6YVYVnR.png">❤️</button>
+
+      <button id="deleteBtn">🗑 Hapus</button>
+      <button id="downloadBtn">⬇ Download</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="canvas" hidden></canvas>
 
 <script src="script.js"></script>
 </body>
