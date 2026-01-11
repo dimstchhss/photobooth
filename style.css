@@ -26,10 +26,10 @@ body{
 
 header{
   display:flex;
-  gap:10px;
   justify-content:space-between;
   align-items:center;
   margin-bottom:12px;
+  gap:10px;
 }
 
 button,select{
@@ -82,7 +82,7 @@ video{
   z-index:4;
 }
 
-.flash-animate{
+.flash{
   animation:flash .25s ease;
 }
 
@@ -131,4 +131,23 @@ video{
 .editor canvas{
   background:white;
   border-radius:20px;
+}
+
+/* PERMISSION */
+.permission{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  z-index:9999;
+  color:white;
+  text-align:center;
+}
+.permission button{
+  font-size:18px;
+  padding:14px 28px;
 }
