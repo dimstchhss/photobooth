@@ -2,9 +2,13 @@
   --bg: linear-gradient(135deg,#fce7f3,#e0f2fe,#dcfce7);
   --card:#ffffffdd;
   --accent:#facc15;
+  --dark:#1f2937;
 }
 
-*{box-sizing:border-box;font-family:Poppins,sans-serif}
+*{
+  box-sizing:border-box;
+  font-family:Poppins,sans-serif;
+}
 
 body{
   margin:0;
@@ -15,6 +19,7 @@ body{
   align-items:center;
 }
 
+/* ================= APP ================= */
 .app{
   width:100%;
   max-width:1100px;
@@ -24,23 +29,40 @@ body{
   box-shadow:0 30px 60px rgba(0,0,0,.15);
 }
 
+/* ================= HEADER ================= */
 header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:12px;
-  gap:10px;
+  gap:12px;
+  margin-bottom:16px;
 }
 
+header strong{
+  font-size:20px;
+}
+
+/* ================= BUTTON ================= */
 button,select{
   border:none;
   border-radius:999px;
-  padding:10px 16px;
+  padding:10px 18px;
   background:var(--accent);
   font-weight:600;
   cursor:pointer;
+  transition:.2s ease;
 }
 
+button:hover,select:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+}
+
+button:active{
+  transform:scale(.97);
+}
+
+/* ================= CAMERA ================= */
 .main{
   display:grid;
   grid-template-columns:2fr 1fr;
@@ -52,6 +74,7 @@ button,select{
   border-radius:20px;
   overflow:hidden;
   background:black;
+  min-height:420px;
 }
 
 video{
@@ -60,6 +83,7 @@ video{
   object-fit:cover;
 }
 
+/* ================= COUNTDOWN & FLASH ================= */
 #countdown{
   position:absolute;
   inset:0;
@@ -71,6 +95,7 @@ video{
   color:white;
   opacity:0;
   z-index:3;
+  pointer-events:none;
 }
 
 #flash{
@@ -92,10 +117,15 @@ video{
   100%{opacity:0}
 }
 
+/* ================= CONTROLS ================= */
 .controls{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:10px;
+}
+
+.controls strong{
+  margin-top:6px;
 }
 
 .filter-list{
@@ -104,12 +134,23 @@ video{
   gap:8px;
 }
 
-.filter-btn{background:#f1f5f9}
-.filter-btn.active{background:#a5f3fc}
+.filter-btn{
+  background:#f1f5f9;
+}
 
-.snap{font-size:18px}
+.filter-btn.active{
+  background:#a5f3fc;
+}
 
-.review,.editor{display:none}
+.snap{
+  font-size:18px;
+  padding:14px;
+}
+
+/* ================= REVIEW ================= */
+.review,.editor{
+  display:none;
+}
 
 .preview{
   display:grid;
@@ -122,6 +163,7 @@ video{
   border-radius:12px;
 }
 
+/* ================= EDITOR ================= */
 .editor-layout{
   display:grid;
   grid-template-columns:2fr 1fr;
@@ -129,11 +171,12 @@ video{
 }
 
 .editor canvas{
+  width:100%;
   background:white;
   border-radius:20px;
 }
 
-/* PERMISSION */
+/* ================= PERMISSION ================= */
 .permission{
   position:fixed;
   inset:0;
@@ -146,8 +189,43 @@ video{
   z-index:9999;
   color:white;
   text-align:center;
+  padding:20px;
 }
+
+.permission h2{
+  font-size:24px;
+}
+
 .permission button{
   font-size:18px;
   padding:14px 28px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+  body{
+    align-items:flex-start;
+  }
+
+  .app{
+    border-radius:0;
+    min-height:100vh;
+  }
+
+  header{
+    flex-wrap:wrap;
+  }
+
+  .main,
+  .editor-layout{
+    grid-template-columns:1fr;
+  }
+
+  .camera-wrap{
+    min-height:300px;
+  }
+
+  .preview{
+    grid-template-columns:1fr;
+  }
 }
