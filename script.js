@@ -1,4 +1,4 @@
-/* ====== ELEMENT ====== */
+/* ========= ELEMENT ========= */
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -6,30 +6,41 @@ const cd = document.getElementById("countdown");
 const flash = document.getElementById("flash");
 const preview = document.getElementById("preview");
 const filters = document.getElementById("filters");
-const photoCount = document.getElementById("photoCount");
 
 const snapBtn = document.getElementById("snapBtn");
 const editBtn = document.getElementById("editBtn");
 const soundBtn = document.getElementById("soundBtn");
 const deleteBtn = document.getElementById("deleteBtn");
 const downloadBtn = document.getElementById("downloadBtn");
+const photoCount = document.getElementById("photoCount");
 
-/* ====== STATE ====== */
-let photos=[], currentFilter="none";
-let editorCanvas, currentFrame=null;
-let soundEnabled=true;
+/* ========= STATE ========= */
+let photos = [];
+let currentFilter = "none";
+let editorCanvas = null;
+let currentFrame = null;
+let soundEnabled = true;
 
-/* ====== AUDIO ====== */
+/* ========= AUDIO (HTTPS SAFE) ========= */
 const shutterSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-camera-shutter-click-1133.mp3");
 const clickSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3");
 
-/* ====== CAMERA ====== */
-navigator.mediaDevices.getUserMedia({video:true})
-.then(s=>video.srcObject=s)
-.catch(()=>alert("Kamera tidak bisa diakses"));
+/* Browser unlock audio */
+document.body.addEventListener("click", () => {
+  shutterSound.load();
+  clickSound.load();
+}, { once:true });
 
-/* ====== FILTER ====== */
-const filterData={
+/* ========= CAMERA ========= */
+navigator.mediaDevices.getUserMedia({ video:true })
+  .then(stream => video.srcObject = stream)
+  .catch(err => {
+    alert("❌ Kamera tidak bisa diakses.\nPastikan HTTPS & izin kamera aktif.");
+    console.error(err);
+  });
+
+/* ========= FILTER ========= */
+const filterData = {
   Normal:"none",
   Bright:"brightness(1.2)",
   Contrast:"contrast(1.4)",
@@ -38,21 +49,21 @@ const filterData={
   "B&W":"grayscale(1)"
 };
 
-Object.entries(filterData).forEach(([n,v])=>{
+Object.entries(filterData).forEach(([name,val])=>{
   const b=document.createElement("button");
-  b.textContent=n;
+  b.textContent=name;
   b.className="filter-btn";
   b.onclick=()=>{
     playClick();
     document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));
     b.classList.add("active");
-    currentFilter=v;
-    video.style.filter=v;
+    currentFilter=val;
+    video.style.filter=val;
   };
   filters.appendChild(b);
 });
 
-/* ====== UTIL ====== */
+/* ========= UTIL ========= */
 function playClick(){
   if(!soundEnabled) return;
   clickSound.currentTime=0;
@@ -68,7 +79,7 @@ function cameraFlash(){
   flash.classList.add("flash-animate");
 }
 
-/* ====== PHOTO ====== */
+/* ========= PHOTO ========= */
 function countdown(sec){
   return new Promise(r=>{
     cd.style.opacity=1;
@@ -76,11 +87,15 @@ function countdown(sec){
     cd.textContent=n;
     const t=setInterval(()=>{
       n--;
-      if(n===0){clearInterval(t);cd.style.opacity=0;r();}
-      else cd.textContent=n;
+      if(n===0){
+        clearInterval(t);
+        cd.style.opacity=0;
+        r();
+      } else cd.textContent=n;
     },1000);
   });
 }
+
 function takePhoto(){
   if(soundEnabled){
     shutterSound.currentTime=0;
@@ -93,6 +108,7 @@ function takePhoto(){
   ctx.drawImage(video,0,0);
   return canvas.toDataURL();
 }
+
 async function startCapture(){
   playClick();
   photos=[];
@@ -102,16 +118,18 @@ async function startCapture(){
   }
   showReview();
 }
+
 function showReview(){
   document.querySelector(".camera").style.display="none";
   document.querySelector(".review").style.display="block";
   preview.innerHTML="";
-  photos.forEach((s,i)=>{
+  photos.forEach((src,i)=>{
     const d=document.createElement("div");
-    d.innerHTML=`<img src="${s}"><button onclick="retake(${i})">Retake</button>`;
+    d.innerHTML=`<img src="${src}"><button onclick="retake(${i})">Retake</button>`;
     preview.appendChild(d);
   });
 }
+
 async function retake(i){
   playClick();
   document.querySelector(".camera").style.display="grid";
@@ -121,7 +139,7 @@ async function retake(i){
   showReview();
 }
 
-/* ====== EDITOR ====== */
+/* ========= EDITOR ========= */
 function openEditor(){
   playClick();
   document.querySelector(".review").style.display="none";
@@ -132,6 +150,7 @@ function openEditor(){
     buildPhotoStrip();
   },50);
 }
+
 function buildPhotoStrip(){
   editorCanvas.clear();
   let y=20;
@@ -144,6 +163,7 @@ function buildPhotoStrip(){
     });
   });
 }
+
 function addFrame(url){
   playClick();
   if(currentFrame) editorCanvas.remove(currentFrame);
@@ -156,6 +176,7 @@ function addFrame(url){
     currentFrame=img;
   });
 }
+
 function addSticker(url){
   playClick();
   fabric.Image.fromURL(url,img=>{
@@ -165,15 +186,18 @@ function addSticker(url){
     editorCanvas.setActiveObject(img);
   });
 }
+
 function setBg(color){
   playClick();
   editorCanvas.setBackgroundColor(color,editorCanvas.renderAll.bind(editorCanvas));
 }
+
 function deleteObject(){
   playClick();
   const o=editorCanvas.getActiveObject();
   if(o) editorCanvas.remove(o);
 }
+
 function downloadFinal(){
   playClick();
   const a=document.createElement("a");
@@ -182,7 +206,7 @@ function downloadFinal(){
   a.click();
 }
 
-/* ====== EVENTS ====== */
+/* ========= EVENTS ========= */
 snapBtn.onclick=startCapture;
 editBtn.onclick=openEditor;
 soundBtn.onclick=toggleSound;
