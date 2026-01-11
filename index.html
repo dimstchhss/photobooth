@@ -5,8 +5,13 @@
 <title>D PhotoBooth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./style.css">
+
+<!-- Fabric HARUS duluan -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+
+<!-- script.js WAJIB defer -->
+<script defer src="./script.js"></script>
 </head>
 
 <body>
@@ -14,12 +19,14 @@
 
 <header>
   <strong>😈DPhotoBooth</strong>
+
   <select id="photoCount">
     <option value="2">2 Foto</option>
     <option value="3">3 Foto</option>
     <option value="4">4 Foto</option>
     <option value="5">5 Foto</option>
   </select>
+
   <button id="soundBtn">🔊 Sound ON</button>
 </header>
 
@@ -34,7 +41,7 @@
   <div class="controls">
     <strong>🎨 Filter</strong>
     <div class="filter-list" id="filters"></div>
-    <button class="snap" id="snapBtn">📸 JEPRET!</button>
+    <button id="snapBtn" class="snap">📸 JEPRET!</button>
   </div>
 </div>
 
@@ -72,7 +79,6 @@
 </div>
 
 <canvas id="canvas" hidden></canvas>
-
-<script src="script.js"></script>
+</div>
 </body>
 </html>
