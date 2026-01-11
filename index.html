@@ -5,84 +5,233 @@
 <title>D PhotoBooth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="style.css">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-<script defer src="script.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui, sans-serif;
+  background:#111;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+}
+
+.app{
+  max-width:420px;
+  width:100%;
+  padding:15px;
+}
+
+video{
+  width:100%;
+  border-radius:14px;
+  background:#000;
+}
+
+.controls{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+}
+
+button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#facc15;
+  font-weight:700;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:#333;
+  color:#fff;
+}
+
+.editor{
+  display:none;
+  margin-top:15px;
+}
+
+canvas{
+  width:100%;
+  border-radius:14px;
+}
+
+/* FLASH */
+.flash{
+  position:fixed;
+  inset:0;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .15s;
+  z-index:999;
+}
+.flash.active{ opacity:1; }
+</style>
 </head>
-
 <body>
-
-<!-- PERMISSION SCREEN -->
-<div id="permissionScreen" class="permission">
-  <h2>📸 Aktifkan Kamera</h2>
-  <p>Klik tombol di bawah untuk mengizinkan akses kamera</p>
-  <button id="startCameraBtn">Aktifkan Kamera</button>
-</div>
 
 <div class="app">
 
-<header>
-  <strong>🎀 D PhotoBooth</strong>
-  <select id="photoCount">
-    <option value="2">2 Foto</option>
-    <option value="3">3 Foto</option>
-    <option value="4">4 Foto</option>
-    <option value="5">5 Foto</option>
-  </select>
-  <button id="soundBtn">🔊 Sound ON</button>
-</header>
+  <video id="video" autoplay playsinline></video>
 
-<!-- CAMERA -->
-<div class="main camera">
-  <div class="camera-wrap">
-    <video id="video" autoplay playsinline></video>
-    <div id="countdown">3</div>
-    <div id="flash"></div>
+  <div class="controls">
+    <button id="startCam">📷 Aktifkan Kamera</button>
+    <button id="toggleSound" class="secondary">🔊 ON</button>
   </div>
 
   <div class="controls">
-    <strong>🎨 Filter</strong>
-    <div class="filter-list" id="filters"></div>
-    <button id="snapBtn" class="snap">📸 JEPRET!</button>
+    <button id="capture">📸 Jepret</button>
   </div>
-</div>
 
-<!-- REVIEW -->
-<div class="review">
-  <h3>🖼 Review Foto</h3>
-  <div class="preview" id="preview"></div>
-  <button id="editBtn">Edit Photobooth</button>
-</div>
-
-<!-- EDITOR -->
-<div class="editor">
-  <h3>✨ Edit Photobooth</h3>
-  <div class="editor-layout">
-    <canvas id="editorCanvas" width="600" height="900"></canvas>
-
+  <div class="editor">
+    <canvas id="editorCanvas"></canvas>
     <div class="controls">
-      <strong>🎨 Background</strong>
-      <button data-bg="#fecdd3">Pink</button>
-      <button data-bg="#bfdbfe">Blue</button>
-      <button data-bg="#dcfce7">Green</button>
-
-      <strong>🖼 Frame</strong>
-      <button data-frame="https://i.imgur.com/Z6XqQ2Y.png">Frame 1</button>
-      <button data-frame="https://i.imgur.com/Wq7XkNw.png">Frame 2</button>
-
-      <strong>✨ Sticker</strong>
-      <button data-sticker="https://i.imgur.com/OVQ8b7M.png">⭐</button>
-      <button data-sticker="https://i.imgur.com/6YVYVnR.png">❤️</button>
-
-      <button id="deleteBtn">🗑 Hapus</button>
-      <button id="downloadBtn">⬇ Download</button>
+      <button id="download">⬇️ Download</button>
     </div>
   </div>
+
 </div>
 
-<canvas id="canvas" hidden></canvas>
-</div>
+<div class="flash" id="flash"></div>
+
+<!-- SOUNDS -->
+<audio id="shutterSound" src="https://assets.mixkit.co/sfx/preview/mixkit-camera-shutter-click-1133.mp3"></audio>
+<audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
+
+<script>
+let stream;
+let photos = [];
+let editorCanvas;
+let soundOn = true;
+
+const video = document.getElementById("video");
+const startCam = document.getElementById("startCam");
+const capture = document.getElementById("capture");
+const editor = document.querySelector(".editor");
+const downloadBtn = document.getElementById("download");
+const flash = document.getElementById("flash");
+
+const shutterSound = document.getElementById("shutterSound");
+const clickSound = document.getElementById("clickSound");
+const toggleSound = document.getElementById("toggleSound");
+
+/* SOUND */
+function play(sound){
+  if(soundOn){
+    sound.currentTime = 0;
+    sound.play();
+  }
+}
+
+toggleSound.onclick=()=>{
+  soundOn=!soundOn;
+  toggleSound.textContent = soundOn ? "🔊 ON" : "🔇 OFF";
+  play(clickSound);
+};
+
+/* CAMERA */
+startCam.onclick = async()=>{
+  play(clickSound);
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:"user" }
+    });
+    video.srcObject = stream;
+  }catch(err){
+    alert(
+      "❌ Kamera ditolak\n\n" +
+      "Klik ikon 🔒 di address bar\n" +
+      "Ubah Camera → Allow\n" +
+      "Lalu refresh halaman"
+    );
+  }
+};
+
+/* CAPTURE */
+capture.onclick=()=>{
+  if(!stream){
+    alert("Aktifkan kamera dulu");
+    return;
+  }
+
+  play(shutterSound);
+
+  flash.classList.add("active");
+  setTimeout(()=>flash.classList.remove("active"),150);
+
+  const c=document.createElement("canvas");
+  c.width=video.videoWidth;
+  c.height=video.videoHeight;
+  c.getContext("2d").drawImage(video,0,0);
+  photos=[c.toDataURL("image/png")];
+
+  openEditor();
+};
+
+/* EDITOR */
+function openEditor(){
+  editor.style.display="block";
+
+  setTimeout(()=>{
+    if(editorCanvas) editorCanvas.dispose();
+
+    editorCanvas = new fabric.Canvas("editorCanvas",{
+      preserveObjectStacking:true
+    });
+
+    editorCanvas.setWidth(360);
+    editorCanvas.setHeight(520);
+
+    /* BACKGROUND (WAJIB DI CANVAS) */
+    const gradient = new fabric.Gradient({
+      type:"linear",
+      coords:{x1:0,y1:0,x2:0,y2:520},
+      colorStops:[
+        {offset:0,color:"#fce7f3"},
+        {offset:1,color:"#e0f2fe"}
+      ]
+    });
+
+    editorCanvas.setBackgroundColor(
+      gradient,
+      editorCanvas.renderAll.bind(editorCanvas)
+    );
+
+    buildPhoto();
+  },50);
+}
+
+function buildPhoto(){
+  fabric.Image.fromURL(photos[0],img=>{
+    img.scaleToWidth(320);
+    img.set({
+      left:20,
+      top:20,
+      selectable:false
+    });
+    editorCanvas.add(img);
+    editorCanvas.renderAll();
+  },{crossOrigin:"anonymous"});
+}
+
+/* DOWNLOAD */
+downloadBtn.onclick=()=>{
+  play(clickSound);
+  const a=document.createElement("a");
+  a.download="photobooth.png";
+  a.href=editorCanvas.toDataURL({
+    format:"png",
+    multiplier:2,
+    enableRetinaScaling:true
+  });
+  a.click();
+};
+</script>
 
 </body>
 </html>
